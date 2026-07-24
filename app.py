@@ -32,11 +32,17 @@ if api_key:
             # Explain Button
             if st.button("🚀 Report Explain Karo"):
                 with st.spinner("AI Report padh raha hai... kripya wait karein..."):
-                    # Using gemini-1.5-flash-latest or gemini-pro which always works globally
-                    try:
-                        model = genai.GenerativeModel('gemini-1.5-flash-latest')
-                    except:
-                        model = genai.GenerativeModel('gemini-pro')
+                    # Auto-detect available model supporting generateContent
+                    active_model = None
+                    for m in genai.list_models():
+                        if 'generateContent' in m.supported_generation_methods:
+                            active_model = m.name
+                            break
+                    
+                    if not active_model:
+                        active_model = 'models/gemini-2.0-flash'
+                        
+                    model = genai.GenerativeModel(active_model)
                     
                     prompt = f"""
                     You are a helpful AI assistant. Read the following document text and provide a response in simple, clear Hinglish (Hindi written in English script):
@@ -60,11 +66,16 @@ if api_key:
             
             if user_question:
                 with st.spinner("Jawab dhoondha ja raha hai..."):
-                    try:
-                        model = genai.GenerativeModel('gemini-1.5-flash-latest')
-                    except:
-                        model = genai.GenerativeModel('gemini-pro')
+                    active_model = None
+                    for m in genai.list_models():
+                        if 'generateContent' in m.supported_generation_methods:
+                            active_model = m.name
+                            break
+                    
+                    if not active_model:
+                        active_model = 'models/gemini-2.0-flash'
                         
+                    model = genai.GenerativeModel(active_model)
                     chat_prompt = f"Based on this document text: {text[:10000]}, answer this question in simple Hinglish: {user_question}"
                     chat_response = model.generate_content(chat_prompt)
                     st.write("**AI ka Jawab:**", chat_response.text)
