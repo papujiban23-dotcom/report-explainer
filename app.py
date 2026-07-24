@@ -32,8 +32,11 @@ if api_key:
             # Explain Button
             if st.button("🚀 Report Explain Karo"):
                 with st.spinner("AI Report padh raha hai... kripya wait karein..."):
-                    # Standard supported model
-                    model = genai.GenerativeModel('gemini-1.5-flash')
+                    # Using gemini-1.5-flash-latest or gemini-pro which always works globally
+                    try:
+                        model = genai.GenerativeModel('gemini-1.5-flash-latest')
+                    except:
+                        model = genai.GenerativeModel('gemini-pro')
                     
                     prompt = f"""
                     You are a helpful AI assistant. Read the following document text and provide a response in simple, clear Hinglish (Hindi written in English script):
@@ -57,7 +60,11 @@ if api_key:
             
             if user_question:
                 with st.spinner("Jawab dhoondha ja raha hai..."):
-                    model = genai.GenerativeModel('gemini-1.5-flash')
+                    try:
+                        model = genai.GenerativeModel('gemini-1.5-flash-latest')
+                    except:
+                        model = genai.GenerativeModel('gemini-pro')
+                        
                     chat_prompt = f"Based on this document text: {text[:10000]}, answer this question in simple Hinglish: {user_question}"
                     chat_response = model.generate_content(chat_prompt)
                     st.write("**AI ka Jawab:**", chat_response.text)
